@@ -69,23 +69,15 @@ for idx, n_e in enumerate(ne):
     for omega in omega_array:
         
         
-        kz = 5
+             
         
-        #lambda = 2*mu.pi/kz
-        
-        
-        Nz_sq = (kz*c/omega)**2  
-        
-        
-        #print str(n_e)
-        #n_e = 5e18     
         Mi = 2
-        B = 2
+        Bfield = 2
         #mi = Mi*amu
         
         
         
-        (Nsq_plus,Nsq_minus, A, B, F) = mu.Nsq_Stix_Uncorrected(Mi,B,n_e,omega,75)
+        (Nsq_plus,Nsq_minus, A, B, F) = mu.Nsq_Stix_Uncorrected(Mi,Bfield,n_e,omega,75)
         
         Nstixplus.append(Nsq_plus)
         Nstixminus.append(Nsq_minus)
