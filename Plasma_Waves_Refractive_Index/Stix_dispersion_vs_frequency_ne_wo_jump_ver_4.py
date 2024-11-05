@@ -52,7 +52,8 @@ def find_nearest(array, value):
 # Main loop to compute N^2 for each density and frequency pair
 
 
-
+Mi = 2
+Bfield = 2
 
 for idx, n_e in enumerate(ne):
     
@@ -67,15 +68,6 @@ for idx, n_e in enumerate(ne):
 
    
     for omega in omega_array:
-        
-        
-             
-        
-        Mi = 2
-        Bfield = 2
-        #mi = Mi*amu
-        
-        
         
         (Nsq_plus,Nsq_minus, A, B, F) = mu.Nsq_Stix_Uncorrected(Mi,Bfield,n_e,omega,75)
         
