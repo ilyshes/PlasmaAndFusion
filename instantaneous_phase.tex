@@ -1,0 +1,108 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[
+%showframe, % This option shows the margins and so on -- remove it in the final version
+]{geometry}
+
+
+
+\geometry{
+	a4paper,
+	total={185mm,265mm},
+	left=10mm,
+	top=10mm,
+}
+
+\usepackage[labelformat=simple]{subcaption}
+% Here: H option for float placement
+\usepackage{float}
+
+\renewcommand\thesubfigure{(\roman{subfigure})}
+
+
+
+\title{\textbf{Transformation of signal $A(t)$ to its instantaneous amplitude and phase representation. 
+}}
+
+\author{Ilya Shesterikov}
+
+\begin{document}
+
+\maketitle
+
+Email: ilyshes@gmail.com
+
+This discussion is to provide a detailed explanation of how a time-varying signal \( A(t) \) can be transformed into an instantaneous amplitude and phase representation. This approach offers a valuable alternative to the traditional Fourier transform, particularly when analyzing signals with time-dependent properties, such as modulated or non-stationary waves often encountered in plasma physics, turbulence studies, and other dynamic systems.
+
+The process for obtaining the instantaneous amplitude and phase of a signal \( A(t) \) involves constructing what is known as the \textit{analytic signal}. By deriving the analytic signal and applying certain mathematical operations, we can decompose \( A(t) \) into a time-dependent amplitude envelope and phase. This decomposition provides insight into the signal's structure, allowing us to study variations in both frequency and amplitude over time, which the Fourier transform cannot achieve for non-stationary signals.
+
+
+
+\section*{Step 1: Constructing the Analytic Signal}
+
+The first step in transforming \( A(t) \) into an instantaneous amplitude and phase representation is to create its analytic signal, denoted \( \tilde{A}(t) \). The analytic signal is a complex-valued function that incorporates \( A(t) \) along with its Hilbert transform, which shifts each frequency component of \( A(t) \) by \( \pi/2 \) (or 90 degrees). The result is a representation in the complex plane that captures both amplitude and phase information in a single expression.
+
+Mathematically, the analytic signal \( \tilde{A}(t) \) is defined as:
+\[
+\tilde{A}(t) = A(t) + i \, \mathcal{H}[A(t)]
+\]
+where \( \mathcal{H}[A(t)] \) is the Hilbert transform of \( A(t) \). The Hilbert transform \( \mathcal{H}[A(t)] \) is computed as:
+\[
+\mathcal{H}[A(t)] = \frac{1}{\pi} \, \text{P.V.} \int_{-\infty}^{\infty} \frac{A(\tau)}{t - \tau} \, d\tau
+\]
+In this expression, ``P.V.'' denotes the Cauchy principal value, ensuring that the integral is well-defined. The Hilbert transform introduces a \( \pi/2 \) phase shift to each component of \( A(t) \), effectively creating a quadrature component that, when combined with \( A(t) \), forms a complex signal in the analytic domain.
+
+
+
+\section*{Step 2: Extracting Instantaneous Amplitude and Phase}
+
+With the analytic signal \( \tilde{A}(t) \) in hand, we can now extract the instantaneous amplitude and phase. By expressing \( \tilde{A}(t) \) in polar form, we separate the time-dependent amplitude and phase components as follows:
+\[
+\tilde{A}(t) = \hat{A}(t) e^{i \phi(t)}
+\]
+where:
+\begin{itemize}
+    \item \( \hat{A}(t) \) represents the \textit{instantaneous amplitude}.
+    \item \( \phi(t) \) represents the \textit{instantaneous phase}.
+\end{itemize}
+
+These quantities are computed as:
+\begin{enumerate}
+    \item \textbf{Instantaneous Amplitude} \( \hat{A}(t) \):
+    \[
+    \hat{A}(t) = |\tilde{A}(t)| = \sqrt{A(t)^2 + \mathcal{H}[A(t)]^2}
+    \]
+    The instantaneous amplitude \( \hat{A}(t) \) is the modulus of the analytic signal \( \tilde{A}(t) \). This amplitude provides a measure of the envelope of the signal at any given time \( t \), capturing fluctuations in the strength of \( A(t) \).
+
+    \item \textbf{Instantaneous Phase} \( \phi(t) \):
+    \[
+    \phi(t) = \arg(\tilde{A}(t)) = \tan^{-1} \left( \frac{\mathcal{H}[A(t)]}{A(t)} \right)
+    \]
+    The instantaneous phase \( \phi(t) \) is the angle of the analytic signal \( \tilde{A}(t) \) in the complex plane. This phase describes how the signal oscillates and evolves over time, providing insight into its frequency content and phase shifts.
+\end{enumerate}
+
+
+
+\section*{Step 3: Deriving Instantaneous Frequency}
+
+For dynamic systems, it is often useful to know the instantaneous frequency, which indicates how rapidly the phase \( \phi(t) \) changes over time. The instantaneous frequency \( \omega(t) \) can be obtained by differentiating the instantaneous phase:
+\[
+\omega(t) = \frac{d\phi(t)}{dt}
+\]
+This expression gives the rate of change of the phase with respect to time, essentially capturing the "local" frequency of the signal at each instant. This is particularly useful for analyzing signals with time-varying frequencies, as it allows us to track how the dominant frequency shifts over time.
+
+
+
+\section*{Significance of Instantaneous Amplitude and Phase Representation}
+
+The transformation of \( A(t) \) into its instantaneous amplitude and phase representation provides a powerful alternative to the Fourier transform. While the Fourier transform decomposes a signal into fixed frequency components, it assumes stationarity, meaning the frequency components do not vary with time. However, in many real-world scenarios---such as plasma waves, modulated signals, and non-stationary waveforms---signals exhibit both time-dependent amplitude and frequency changes.
+
+The instantaneous amplitude and phase representation overcomes this limitation by adapting to these changes, allowing us to observe variations in amplitude and frequency over time. This is invaluable for studying phenomena with transient or non-linear behaviors, where traditional Fourier analysis may fail to capture the underlying dynamics fully.
+
+In conclusion, transforming \( A(t) \) into an analytic signal and subsequently obtaining its instantaneous amplitude and phase provides a comprehensive view of its structure. This approach, capturing the signal's evolution in real-time, is a fundamental tool in time-frequency analysis and is widely applicable in fields where non-stationary signals are of interest. I hope this overview provides a clear understanding of how this representation can serve as a robust alternative to the Fourier transform, enabling a deeper exploration of complex, time-varying systems.
+
+
+
+\end{document}
