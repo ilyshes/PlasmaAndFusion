@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #  This rescales to 1920 px width, keeping aspect ratio
-#  ffmpeg -r 14 -f image2 -s 1920x1080  -i "img/u_%05d.png" -vf "scale=1920:-2"   -vcodec libx264 -crf 25  -pix_fmt yuv420p  output.mp4
+# ffmpeg -f image2 -framerate 45  -i "img/u_%05d.png" -i palette.png -filter_complex "[0:v]select='not(mod(n\,4))' scale=800:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5"   output.gif
 
 
 import time as t
