@@ -1,117 +1,104 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Aug 26 14:06:54 2025
-
-@author: ilya
-"""
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+from PIL import Image
+import io
 
-
-# 1. Enable LaTeX rendering for all text in the plot
-plt.rcParams['text.usetex'] = True
-
+# Define logistic map
 def logistic_map(x, a):
     return a * x * (1 - x)
 
 # Parameters
 a_values = [3.2, 4.0]  # Two values for side-by-side comparison
-comms_values = ['Predictable development', 'Unpredictable development']  # Two values for side-by-side comparison
+comms_values = ['Predictable development', 'Unpredictable development']
 x0 = 0.2
 n_iter = 50
+delay = 100  # milliseconds per frame in GIF
 
+plt.rcParams['text.usetex'] = True
 
-
-font = {'family': 'serif',
-        'color':  'black',
-        'weight': 'normal',
-        'size': 16,
-        }
-
-
-
-# Prepare figure with two subplots
-fig, axs = plt.subplots(1, 2, figsize=(12, 6.8))
-
-fig.suptitle(r'Cobweb Plot Animation $x_{n+1} = a x_n (1 - x_n)$  -- Logistic map', fontsize=20, fontweight='bold')
-
-# Precompute sequences and steps for both plots
+# Precompute steps for cobweb plots
 all_steps = []
+vertical_steps = []
+horizontal_steps = []
+    
 for a in a_values:
     x_vals = [x0]
     for _ in range(n_iter):
         x_vals.append(logistic_map(x_vals[-1], a))
-    steps = []
+    vertical_step = []
+    horizontal_step = []
     for i in range(len(x_vals)-1):
-        # Vertical step
-        steps.append(([x_vals[i], x_vals[i]], [x_vals[i], x_vals[i+1]]))
-        # Horizontal step
-        steps.append(([x_vals[i], x_vals[i+1]], [x_vals[i+1], x_vals[i+1]]))
-    all_steps.append(steps)
+        line_x = [x_vals[i], x_vals[i]]
+        line_y  = [x_vals[i], x_vals[i+1]]
+        vertical_step.append((line_x, line_y))  # vertical line
+        
+        line_x = [x_vals[i], x_vals[i+1]]
+        line_y  =[x_vals[i+1], x_vals[i+1]]       
+        horizontal_step.append((line_x, line_y))  # horizontal
+  
+    vertical_steps.append(vertical_step)
+    horizontal_steps.append(horizontal_step)
+    
+    
+# Prepare figure and subplots
+fig, axs = plt.subplots(1, 2, figsize=(16, 7.8))
+fig.suptitle(r'Cobweb Plot Animation $x_{n+1} = a x_n (1 - x_n)$  -- Logistic map', fontsize=20, fontweight='bold')
 
-# Setup each subplot
-lines = []
+lines = [[] for _ in a_values]
 points = []
+
+# Initial static parts (maps and diagonals)
 for idx, ax in enumerate(axs):
     a = a_values[idx]
     comms = comms_values[idx]
     x = np.linspace(0, 1, 400)
     ax.plot(x, logistic_map(x, a), 'k', linewidth=2)
-    ax.plot(x, x, 'k--', linewidth=2, color='green')
-    ax.tick_params(axis='both', which='major', labelsize=14)
-    ax.tick_params(axis='both', which='minor', labelsize=14)
-   
+    ax.plot(x, x, 'g--', linewidth=2)
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.set_xlabel(r'$x_n$', fontsize=20)
     ax.set_ylabel(r'$x_{n+1}$', fontsize=20)
-    ax.set_title(f'a = {a} \n {comms}', fontsize=20)
-    ax.grid(True, which='both', linestyle='--', linewidth=0.5)
-    ax.grid(True, which='major', linestyle='-', linewidth=0.8)
+    ax.set_title(f'a = {a}\n{comms}', fontsize=18)
+    ax.grid(True, linestyle='--', linewidth=0.5)
+    
+    ax.tick_params(axis='both', which='major', labelsize=14)
+    ax.tick_params(axis='both', which='minor', labelsize=14)
 
+# Prepare GIF frames in memory
+frames = []
+max_frames = max(len(steps) for steps in vertical_steps)
 
-   
-    line, = ax.plot([], [], color='blue', linewidth=1)
-    point, = ax.plot([], [], 'ro')
-    lines.append(line)
-    points.append(point)
+for frame in range(max_frames):
+    for idx, ax in enumerate(axs):
+        # Plot steps incrementally
+        if frame < len(vertical_steps[idx]):
+             # retriew data and plot vertical line
+             vertical_step = vertical_steps[idx][frame]
+             line_x = vertical_step[0]
+             line_y = vertical_step[1]
+             ax.plot(line_x, line_y, color='blue', linewidth=1)
+             
+             ax.plot(line_x[1], line_y[1], 'ro')  # point
+             plt.pause(0.1)
+             # retriew data and plot horizontal line
+             horizontal_step = horizontal_steps[idx][frame]
+             line_x = horizontal_step[0]
+             line_y = horizontal_step[1]
+             ax.plot(line_x, line_y, color='blue', linewidth=1)
+           
+             plt.pause(0.1)
 
+    # Capture current figure as image in memory
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    frames.append(Image.open(buf))
 
-# Animation function
-lines_x = [[] for _ in a_values]
-lines_y = [[] for _ in a_values]
+      # Optional for interactive preview
 
-def init():
-    for line, point in zip(lines, points):
-        line.set_data([], [])
-        point.set_data([], [])
-    return lines + points 
-
-def update(frame):
-    for idx in range(len(a_values)):
-        N_iter = len(all_steps[idx])
-        if frame < N_iter:
-                     
-            lines_x[idx].append(all_steps[idx][frame][0])
-            lines_y[idx].append(all_steps[idx][frame][1])
-            lines[idx].set_data(np.concatenate(lines_x[idx]),
-                                np.concatenate(lines_y[idx]))
-            points[idx].set_data(all_steps[idx][frame][0][1],
-                                 all_steps[idx][frame][1][1])
-    return lines + points 
-
-# Max number of frames among both parameter sets
-max_frames = max(len(steps) for steps in all_steps)
-
-ani = animation.FuncAnimation(fig, update, frames=max_frames,
-                              init_func=init, interval=100, blit=True, repeat=False)
-
-plt.tight_layout()
-plt.show()
-
-# This is the line to save the animation as a GIF file
-ani.save('my_animation.gif')
-
+# Build GIF
+frames[0].save('logistic_map.gif', save_all=True, append_images=frames[1:], duration=delay, loop=0)
+print("GIF saved as logistic_map.gif")
