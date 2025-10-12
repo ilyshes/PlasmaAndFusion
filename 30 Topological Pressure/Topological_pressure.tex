@@ -1,1 +1,99 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
 
+\title{Mathematical Formalism of the Largest Lyapunov Exponent Calculation}
+\author{Gemini}
+\date{\today}
+
+\begin{document}
+
+\section*{Topological Pressure}
+
+\subsection*{1. Motivation}
+
+Topological entropy \( h_{\text{top}}(f) \) measures the exponential growth rate of distinguishable orbit segments in a dynamical system.  
+Topological pressure \( P(\phi) \) generalizes this concept by introducing a continuous \emph{potential function} \( \phi : X \to \mathbb{R} \), 
+which allows different orbits to be weighted differently—analogous to weighting microstates by energy in statistical mechanics.
+
+\subsection*{2. Definition}
+
+Let \( f : X \to X \) be a continuous map on a compact metric space \( X \), 
+and \( \phi : X \to \mathbb{R} \) be a continuous function.  
+Define the $n$-step potential sum along an orbit:
+\[
+S_n \phi(x) = \sum_{k=0}^{n-1} \phi(f^k(x)).
+\]
+For given \( n \) and \( \varepsilon > 0 \), let \( E \subset X \) be a maximal \((n,\varepsilon)\)-separated set, 
+and define the corresponding partition function:
+\[
+Z_n(\phi, \varepsilon) = \sum_{x \in E} \exp(S_n \phi(x)).
+\]
+The \emph{topological pressure} is then
+\[
+P(\phi) = \lim_{\varepsilon \to 0} 
+\left( \limsup_{n \to \infty} 
+\frac{1}{n} \ln Z_n(\phi, \varepsilon) \right).
+\]
+
+\subsection*{3. Interpretation}
+
+When \( \phi = 0 \), the weights are unity, \( Z_n = N(n,\varepsilon) \), and
+\[
+P(0) = h_{\text{top}}(f),
+\]
+so topological pressure generalizes topological entropy.
+For nonzero \( \phi \), orbit segments contribute with different weights \( e^{S_n \phi(x)} \),
+and \( P(\phi) \) measures the exponential growth rate of this weighted orbit complexity.
+
+\subsection*{4. Variational Principle}
+
+The topological pressure satisfies the \emph{variational principle}:
+\[
+P(\phi) = \sup_{\mu \in \mathcal{M}_f} 
+\left[\, h_\mu(f) + \int \phi \, d\mu \, \right],
+\]
+where \( \mathcal{M}_f \) is the set of \( f \)-invariant probability measures 
+and \( h_\mu(f) \) is the measure-theoretic (Kolmogorov–Sinai) entropy.
+The measure \( \mu_\phi \) that attains the supremum is called the \emph{equilibrium state} for \( \phi \).
+
+\subsection*{5. Thermodynamic Analogy}
+
+The correspondence with thermodynamics is summarized below:
+\[
+\begin{array}{lll}
+\text{Energy} & \leftrightarrow & \text{Potential function } \phi, \\[4pt]
+\text{Temperature } (T=1/\beta) & \leftrightarrow & \text{Scaling of } \phi, \\[4pt]
+\text{Partition function } Z = \sum e^{-\beta E} & \leftrightarrow & Z_n(\phi,\varepsilon) = \sum e^{S_n \phi(x)}, \\[4pt]
+\text{Free energy } F = -T \ln Z & \leftrightarrow & P(\phi) = \lim \frac{1}{n}\ln Z_n, \\[4pt]
+\text{Entropy } S = -\partial F / \partial T & \leftrightarrow & h_\mu(f) = P(\phi) - \int \phi\, d\mu.
+\end{array}
+\]
+
+\subsection*{6. Example: Lyapunov Weights}
+
+For one-dimensional maps, choosing
+\[
+\phi(x) = -t \ln |f'(x)|
+\]
+leads to the \emph{Bowen equation}
+\[
+P(\phi_t) = 0,
+\]
+whose solution in \( t \) gives the Hausdorff dimension of the corresponding invariant set.
+
+\subsection*{7. Summary}
+
+\[
+\boxed{
+\begin{aligned}
+&\text{Topological entropy:} && h_{\text{top}} = P(0), \\[4pt]
+&\text{Topological pressure:} && P(\phi) = \text{weighted exponential growth rate of orbit complexity}, \\[4pt]
+&\text{Variational principle:} && P(\phi) = \sup_{\mu} \big( h_\mu + \int \phi\, d\mu \big).
+\end{aligned}
+}
+\]
+
+
+\end{document}
