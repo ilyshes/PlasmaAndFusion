@@ -78,7 +78,7 @@ trajectory_for_LLE.append(initial_point_for_LLE)
 # --- LLE Traces ---
 lle_time = [0.0]
 local_lyapunov_exponent = []
-local_deformation = []
+local_LE = []
 current_sum_of_log_stretching = 0.0
 # --- End LLE Traces ---
 
@@ -236,9 +236,9 @@ for k, filename in enumerate(file_list): # k is the time step index
             # 2. Update the accumulated sum of log stretching factors
             # log(stretching) = log( ||delta'_{t+dt}|| / ||delta_t|| )
             if delta_prime_norm > 1e-12: # Avoid log(0)
-                 local_deform = np.log(delta_prime_norm / initial_delta_norm)/dt
+                 local_deform = np.log(delta_prime_norm / initial_delta_norm)
                  current_sum_of_log_stretching += local_deform
-                 local_deformation.append(local_deform)
+                 local_LE.append(local_deform/dt)
             
             # 3. Renormalize the perturbation vector (the key of Benettin)
             # This sets the new perturbed point to X_{t+dt} + delta_{t+dt}, where ||delta_{t+dt}|| = ||delta_0||
@@ -370,7 +370,7 @@ for k, filename in enumerate(file_list): # k is the time step index
     
                
                 # --- Plot LLE ---
-                ax_lle.plot(lle_time[1:], local_deformation, '-', color='red', linewidth=2, label=r'LLE $\lambda$')
+                ax_lle.plot(lle_time[1:], local_LE, '-', color='red', linewidth=2, label=r'LLE $\lambda$')
                 ax_lle.tick_params(axis='both', which='major', labelsize=14)
                 ax_lle.text(0.3, 0.95, r'Local Lyapunov Exponent $\lambda$' , transform=ax_lle.transAxes, 
                                     fontsize=15, color='black', 
