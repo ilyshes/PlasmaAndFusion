@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Created on Thu Oct 16 10:06:21 2025
+
+@author: ilya
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 #  This rescales to 1920 px width, keeping aspect ratio
 #  ffmpeg -r 14 -f image2 -s 1920x1080  -i "img/u_%05d.png" -vf "scale=1920:-2"   -vcodec libx264 -crf 25  -pix_fmt yuv420p  output.mp4
@@ -40,8 +48,8 @@ points_coords = []
 
 delta = 0.03
 # Center the phase volume near a known point of interest (e.g., around x=1, y=0)
-x0_val = 3.0 #5.0
-y0_val = 4.0 # 0.8
+x0_val = 4.0 #5.0
+y0_val = 2.0 # 0.8
 Radius_initial_region = 0.03 # Keep the radius small for local linear approximation
 num_points = 25 # Number of points defining the circular volume
 
@@ -65,6 +73,8 @@ for point in points_coords:
     trajectories.append(traj)
 
 
+
+EigVal_time = []
 trajectory_for_Jacobian = []
 trajectory_for_Jacobian.append(initial_point_for_Jacobian)
 
@@ -156,12 +166,12 @@ frames = []
 
 plt.tight_layout()                  
 
-file_list = file_list[0:5000] #  Temporary for test
+
 
 
    
 # Loop through each file in the directory
-for filename in file_list:
+for k, filename in enumerate(file_list):
     filepath = os.path.join(output_dir, filename)
     
     try:
@@ -184,6 +194,11 @@ for filename in file_list:
             v_interp = RegularGridInterpolator((y_arr, x_arr), v, bounds_error=False, fill_value=None)
 
 
+
+            time_now = k * dt
+            EigVal_time.append(time_now)
+            
+            
             def traj_interp(traj):
                 last_point = traj[-1]
                 point = np.array(last_point)  # y, x order for interpolator
@@ -376,8 +391,8 @@ for filename in file_list:
                 ax_zoom.tick_params(axis='both', which='major', labelsize=14)
     
                
-                ax_Jacobian.plot(lambda_1_trace)
-                ax_Jacobian.plot(lambda_2_trace)
+                ax_Jacobian.plot(EigVal_time, lambda_1_trace)
+                ax_Jacobian.plot(EigVal_time, lambda_2_trace)
                 ax_Jacobian.tick_params(axis='both', which='major', labelsize=14)
                 ax_Jacobian.text(0.3, 0.95, r'Jacobian Eigenvalues along trajectory  ' , transform=ax_Jacobian.transAxes, 
                                     fontsize=15, color='black', 
